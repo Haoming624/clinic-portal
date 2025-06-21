@@ -1,5 +1,11 @@
 class PatientsController < ApplicationController
   before_action :set_patient, only: %i[ show edit update destroy ]
+  before_action :authenticate_user!
+  before_action :check_receptionist, except: [:index, :show]
+
+  def check_receptionist
+    redirect_to root_path, alert: "Access denied." unless current_user.receptionist?
+  end
 
   # GET /patients or /patients.json
   def index

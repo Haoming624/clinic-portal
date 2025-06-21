@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get "dashboards/receptionist"
+  get "dashboards/doctor"
+  get "home/index"
   resources :patients
   devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
@@ -13,4 +16,13 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  
+  devise_scope :user do
+    root to: "devise/sessions#new"
+  end
+
+  get "receptionist_dashboard", to: "dashboards#receptionist"
+  get "doctor_dashboard", to: "dashboards#doctor"
+
+
 end
