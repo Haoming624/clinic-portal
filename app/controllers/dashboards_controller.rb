@@ -13,9 +13,13 @@ class DashboardsController < ApplicationController
     redirect_to root_path, alert: "Access denied." unless current_user.role == "doctor"
 
     @patients = filtered_patients
+  end
 
+  def analytics
     # Fetch patients grouped by registration date, count per day
     @registrations_by_date = Patient.group("DATE(created_at)").order("DATE(created_at)").count
+
+    render :analytics
   end
 
   private

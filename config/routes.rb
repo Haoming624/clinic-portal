@@ -16,13 +16,13 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
-  
+
   devise_scope :user do
     root to: "devise/sessions#new"
   end
 
   get "receptionist_dashboard", to: "dashboards#receptionist"
   get "doctor_dashboard", to: "dashboards#doctor"
-
+  get 'doctor/analytics', to: 'dashboards#analytics', as: 'doctor_analytics'
 
 end

@@ -1,0 +1,46 @@
+<h1>Analytics</h1>
+
+<h3>Patients Registered Over Time</h3>
+<%= render "shared/chart",
+           id: "patientsChart",
+           type: "line",
+           labels: @registrations_by_date.keys,
+           datasets: [{
+             label: "Patients Registered",
+             data: @registrations_by_date.values,
+             backgroundColor: "rgba(75, 192, 192, 0.2)",
+             borderColor: "rgba(75, 192, 192, 1)",
+             borderWidth: 2,
+             pointRadius: 4,
+             pointHoverRadius: 6,
+             fill: true,
+             tension: 0.3
+           }],
+           options: {
+             responsive: true,
+             plugins: {
+               title: { display: true, text: "Daily Patient Registrations", font: { size: 16 } },
+               legend: { display: false },
+               tooltip: { mode: "index", intersect: false }
+             },
+             interaction: {
+               mode: "nearest",
+               axis: "x",
+               intersect: false
+             },
+             scales: {
+               x: {
+                 title: { display: true, text: "Date" },
+                 ticks: { autoSkip: true, maxTicksLimit: 10 }
+               },
+               y: {
+                 beginAtZero: true,
+                 title: { display: true, text: "Number of Patients" },
+                 stepSize: 1
+               }
+             }
+           } %>
+
+<div class="d-flex justify-content-between mt-4">
+    <%= link_to "Back to dashboard", (current_user.receptionist? ? receptionist_dashboard_path : doctor_dashboard_path), class: "btn btn-outline-secondary" %>
+</div>
