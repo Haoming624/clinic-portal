@@ -23,16 +23,19 @@
     </div>
 
     <div class="card-footer bg-light d-flex justify-content-between flex-wrap gap-2">
-      <%= link_to "Edit this patient", edit_patient_path(@patient), class: "btn btn-warning" %>
+      <% if receptionist? %>
+        <%= link_to "Edit this patient", edit_patient_path(@patient), class: "btn btn-warning" %>
+        <button type="button" 
+          class="btn btn-danger" 
+          data-bs-toggle="modal" 
+          data-bs-target="#confirmDeleteModal"
+          data-patient-id="<%= @patient.id %>"
+          data-patient-name="<%= @patient.name %>">
+          <i class="bi bi-trash-fill me-1"></i> Delete
+        </button>
+      <% end %>
+
       <%= link_to "Back to dashboard", (current_user.receptionist? ? receptionist_dashboard_path : doctor_dashboard_path), class: "btn btn-outline-secondary" %>
-      <button type="button" 
-        class="btn btn-danger" 
-        data-bs-toggle="modal" 
-        data-bs-target="#confirmDeleteModal"
-        data-patient-id="<%= @patient.id %>"
-        data-patient-name="<%= @patient.name %>">
-        <i class="bi bi-trash-fill me-1"></i> Delete
-      </button>
     </div>
   </div>
 </div>

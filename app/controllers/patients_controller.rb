@@ -3,6 +3,7 @@ class PatientsController < ApplicationController
   before_action :check_receptionist, only: [:new, :create, :edit, :update, :destroy]
   before_action :set_patient, only: [:show, :edit, :update, :destroy]
 
+  # Only receptionists allowed for modifying actions
   def check_receptionist
     redirect_to root_path, alert: "Access denied." unless current_user.role == "receptionist"
   end
