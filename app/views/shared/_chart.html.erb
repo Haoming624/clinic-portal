@@ -1,0 +1,18 @@
+<div class="card shadow-sm mb-4 p-3">
+  <canvas id="<%= id %>" height="200"></canvas>
+</div>
+
+<script>
+  document.addEventListener("turbo:load", function () {
+    const ctx = document.getElementById("<%= id %>").getContext('2d');
+
+    new Chart(ctx, {
+      type: "<%= type || 'line' %>",
+      data: {
+        labels: <%= raw labels.to_json %>,
+        datasets: <%= raw datasets.to_json %>
+      },
+      options: <%= raw (options || {}).to_json %>
+    });
+  });
+</script>

@@ -14,7 +14,10 @@
 
     <!-- Bootstrap Icons CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" crossorigin="anonymous">
-    
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"></script>
+
     <%= javascript_importmap_tags %>
 
     <style>
@@ -39,6 +42,9 @@
       .main-container {
         margin-top: 1.5rem;
       }
+      html {
+        scroll-behavior: smooth;
+      }
     </style>
   </head>
 
@@ -51,11 +57,18 @@
             Clinic Portal - <%= current_user.role.capitalize %>
           </span>
           
-          <div class="d-flex align-items-center">
-            <span class="user-email me-3">
+          <div class="d-flex align-items-center gap-3">
+            <% if current_user.doctor? %>
+              <%= link_to "#{doctor_dashboard_path}#analytics", class: "btn btn-outline-primary btn-sm" do %>
+                <i class="bi bi-bar-chart-line me-1"></i> Analytics
+            <% end %>
+          <% end %>
+          
+            <span class="user-email">
               <i class="bi bi-person-circle me-1"></i>
               <%= current_user.email %>
             </span>
+
             <%= button_to "Logout", destroy_user_session_path, method: :delete, 
                 class: "btn btn-outline-danger btn-sm", 
                 form: { class: "d-inline" } %>

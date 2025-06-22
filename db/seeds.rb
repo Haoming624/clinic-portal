@@ -29,4 +29,17 @@ Patient.create!([
   { name: "Catherine Lee", dob: Date.new(2001, 11, 9), notes: "Recovering from surgery" }
 ])
 
+# Generate 20 random patients with varied registration dates
+20.times do |i|
+  created_date = rand(0..60).days.ago
+  Patient.create!(
+    name: "Patient #{i + 1}",
+    dob: Date.new(1950 + rand(70), rand(1..12), rand(1..28)),
+    notes: "Generated patient for testing",
+    status: Patient.statuses.keys.sample,
+    created_at: created_date,
+    updated_at: created_date
+  )
+end
+
 puts "Seeded #{Patient.count} patients."
