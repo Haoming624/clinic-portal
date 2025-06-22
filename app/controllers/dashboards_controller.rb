@@ -32,11 +32,13 @@ class DashboardsController < ApplicationController
     end
 
     if params[:dob_from].present?
-      patients = patients.where("dob >= ?", params[:dob_from])
+      from_year = params[:dob_from].to_i
+      patients = patients.where("dob >= ?", Date.new(from_year).beginning_of_year)
     end
 
     if params[:dob_to].present?
-      patients = patients.where("dob <= ?", params[:dob_to])
+      to_year = params[:dob_to].to_i
+      patients = patients.where("dob <= ?", Date.new(to_year).end_of_year)
     end
 
     if params[:status].present? && params[:status] != ""

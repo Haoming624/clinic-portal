@@ -13,13 +13,17 @@
           </div>
 
           <div class="mb-3">
-            <%= label_tag :dob_from, "Date of Birth From", class: "form-label fw-semibold" %>
-            <%= date_field_tag :dob_from, params[:dob_from], class: "form-control" %>
+            <%= label_tag :dob_from, "Year of Birth From", class: "form-label fw-semibold" %>
+            <%= select_tag :dob_from,
+                  options_for_select([["", ""]] + (1900..Date.today.year).to_a.reverse.map { |y| [y, y] }, params[:dob_from]),
+                  class: "form-select" %>
           </div>
 
           <div class="mb-3">
-            <%= label_tag :dob_to, "Date of Birth To", class: "form-label fw-semibold" %>
-            <%= date_field_tag :dob_to, params[:dob_to], class: "form-control" %>
+            <%= label_tag :dob_to, "Year of Birth To", class: "form-label fw-semibold" %>
+            <%= select_tag :dob_to,
+                  options_for_select([["", ""]] + (1900..Date.today.year).to_a.reverse.map { |y| [y, y] }, params[:dob_to]),
+                  class: "form-select" %>
           </div>
 
           <div class="mb-3">
