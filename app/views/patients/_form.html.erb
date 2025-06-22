@@ -1,32 +1,14 @@
-<%= form_with(model: patient) do |form| %>
-  <% if patient.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(patient.errors.count, "error") %> prohibited this patient from being saved:</h2>
+<div class="mb-3">
+  <%= f.label :name, class: "form-label fw-semibold" %>
+  <%= f.text_field :name, class: "form-control", required: true %>
+</div>
 
-      <ul>
-        <% patient.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+<div class="mb-3">
+  <%= f.label :dob, "Date of Birth", class: "form-label fw-semibold" %>
+  <%= f.date_field :dob, class: "form-control", required: true %>
+</div>
 
-  <div>
-    <%= form.label :name, style: "display: block" %>
-    <%= form.text_field :name %>
-  </div>
-
-  <div>
-    <%= form.label :dob, style: "display: block" %>
-    <%= form.date_field :dob %>
-  </div>
-
-  <div>
-    <%= form.label :notes, style: "display: block" %>
-    <%= form.textarea :notes %>
-  </div>
-
-  <div>
-    <%= form.submit %>
-  </div>
-<% end %>
+<div class="mb-3">
+  <%= f.label :notes, class: "form-label fw-semibold" %>
+  <%= f.text_area :notes, rows: 3, class: "form-control" %>
+</div>

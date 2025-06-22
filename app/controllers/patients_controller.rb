@@ -1,18 +1,18 @@
 class PatientsController < ApplicationController
-  before_action :set_patient, only: %i[ show edit update destroy ]
   before_action :authenticate_user!
-  before_action :check_receptionist, except: [:index, :show]
+  before_action :check_receptionist, only: [:new, :create, :edit, :update, :destroy]
+  before_action :set_patient, only: [:show, :edit, :update, :destroy]
 
   def check_receptionist
-    redirect_to root_path, alert: "Access denied." unless current_user.receptionist?
+    redirect_to root_path, alert: "Access denied." unless current_user.role == "receptionist"
   end
 
-  # GET /patients or /patients.json
+  # GET /patients
   def index
     @patients = Patient.all
   end
 
-  # GET /patients/1 or /patients/1.json
+  # GET /patients/1
   def show
   end
 
@@ -25,52 +25,50 @@ class PatientsController < ApplicationController
   def edit
   end
 
-  # POST /patients or /patients.json
+  # POST /patients
   def create
     @patient = Patient.new(patient_params)
 
-    respond_to do |format|
-      if @patient.save
-        format.html { redirect_to @patient, notice: "Patient was successfully created." }
-        format.json { render :show, status: :created, location: @patient }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @patient.errors, status: :unprocessable_entity }
-      end
+    if @patient.save
+      redirect_to receptionist_dashboard_path, notice: "Patient was successfully created."
+    else
+      render :new, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /patients/1 or /patients/1.json
+  # PATCH/PUT /patients/1
   def update
-    respond_to do |format|
-      if @patient.update(patient_params)
-        format.html { redirect_to @patient, notice: "Patient was successfully updated." }
-        format.json { render :show, status: :ok, location: @patient }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @patient.errors, status: :unprocessable_entity }
-      end
+    if @patient.update(patient_params)
+      # flash[:notice] = "Patient was successfully updated."
+      # render :edit, status: :ok
+      redirect_to edit_patient_path(@patient), notice: "Patient was successfully updated."
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
-  # DELETE /patients/1 or /patients/1.json
+  # DELETE /patients/1
   def destroy
-    @patient.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to patients_path, status: :see_other, notice: "Patient was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    # @patient = Patient.find(params[:id])
+    # if @patient.destroy
+    #   redirect_to receptionist_dashboard_path, notice: "Patient was successfully deleted."
+    # else
+    #   redirect_to receptionist_dashboard_path, alert: "Failed to delete patient."
+    # end
+    @patient = Patient.find(params[:id])
+    @patient.destroy
+    redirect_to receptionist_dashboard_path, notice: 'Patient was successfully deleted.'
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+
+    # Set patient before actions
     def set_patient
-      @patient = Patient.find(params.expect(:id))
+      @patient = Patient.find(params[:id])
     end
 
-    # Only allow a list of trusted parameters through.
+    # Whitelist parameters
     def patient_params
-      params.expect(patient: [ :name, :dob, :notes ])
+      params.require(:patient).permit(:name, :dob, :notes)
     end
 end
