@@ -14,7 +14,21 @@
     </div>
     
     <div class="card-body">
-      <%= render @patient %>
+      <p><strong>Name:</strong> <%= @patient.name %></p>
+      <p><strong>Date of Birth:</strong> <%= @patient.dob&.strftime('%Y-%m-%d') %></p>
+      <p><strong>Notes:</strong> <%= @patient.notes.presence || 'None' %></p>
+      <p><strong>Status:</strong> <%= @patient.status&.titleize || 'N/A' %></p>
+      <p><strong>Registered On:</strong> <%= @patient.created_at.strftime('%B %d, %Y') %></p>
+
+      <div class="patient-detail">
+        <span class="patient-detail-label">Last updated by:</span>
+        <%= @patient.updated_by_user ? @patient.updated_by_user.email : "N/A" %>
+      </div>
+
+      <div class="patient-detail">
+        <span class="patient-detail-label">Last updated on:</span>
+        <%= @patient.updated_at.strftime("%B %-d, %Y at %I:%M %p") %>
+      </div>
     </div>
     
     <div class="card-footer bg-light">
@@ -57,12 +71,7 @@
     padding: 1.5rem;
   }
   
-  .patient-detail {
-    margin-bottom: 1rem;
-  }
-  
-  .patient-detail-label {
-    font-weight: 600;
-    color: #495057;
+  .patient-detail p {
+    margin-bottom: 0.75rem;
   }
 </style>

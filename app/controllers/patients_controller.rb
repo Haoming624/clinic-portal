@@ -28,6 +28,7 @@ class PatientsController < ApplicationController
   # POST /patients
   def create
     @patient = Patient.new(patient_params)
+    @patient.updated_by_user = current_user
 
     if @patient.save
       redirect_to receptionist_dashboard_path, notice: "Patient was successfully created."
@@ -38,6 +39,7 @@ class PatientsController < ApplicationController
 
   # PATCH/PUT /patients/1
   def update
+    @patient.updated_by_user = current_user
     if @patient.update(patient_params)
       # flash[:notice] = "Patient was successfully updated."
       # render :edit, status: :ok
@@ -69,6 +71,6 @@ class PatientsController < ApplicationController
 
     # Whitelist parameters
     def patient_params
-      params.require(:patient).permit(:name, :dob, :notes)
+      params.require(:patient).permit(:name, :dob, :notes, :status, :updated_by_user_id)
     end
 end

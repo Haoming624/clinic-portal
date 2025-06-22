@@ -3,18 +3,28 @@ class DashboardsController < ApplicationController
 
   def receptionist
     redirect_to root_path, alert: "Access denied." unless current_user.receptionist?
+
     @query = params[:query]
-    @dob_filter = params[:dob_filter]
+    @dob_from = params[:dob_from]
+    @dob_to = params[:dob_to]
+    @status = params[:status]
 
     @patients = Patient.all
 
-    # Apply search
+    # Search by name (case-insensitive)
     @patients = @patients.where("name ILIKE ?", "%#{@query}%") if @query.present?
 
-    # Apply filter (optional)
-    if @dob_filter.present?
-      year = @dob_filter.to_i
-      @patients = @patients.where("EXTRACT(YEAR FROM dob) = ?", year)
+    # Filter by dob range
+    if @dob_from.present?
+      @patients = @patients.where("dob >= ?", @dob_from)
+    end
+    if @dob_to.present?
+      @patients = @patients.where("dob <= ?", @dob_to)
+    end
+
+    # Filter by status if valid
+    if @status.present? && Patient.statuses.key?(@status)
+      @patients = @patients.where(status: @status)
     end
 
     @patients = @patients.order(:id)

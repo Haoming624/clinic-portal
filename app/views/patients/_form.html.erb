@@ -12,3 +12,8 @@
   <%= f.label :notes, class: "form-label fw-semibold" %>
   <%= f.text_area :notes, rows: 3, class: "form-control" %>
 </div>
+
+<div class="mb-3">
+  <%= f.label :status, class: "form-label" %>
+  <%= f.select :status, Patient.statuses.keys.map { |s| [s.titleize, s] }, {}, class: "form-select" %>
+</div>
