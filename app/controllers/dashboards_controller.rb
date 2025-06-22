@@ -19,6 +19,9 @@ class DashboardsController < ApplicationController
     # Fetch patients grouped by registration date, count per day
     @registrations_by_date = Patient.group("DATE(created_at)").order("DATE(created_at)").count
 
+    # Group patients by status
+    @patients_by_status = Patient.group(:status).count
+
     render :analytics
   end
 

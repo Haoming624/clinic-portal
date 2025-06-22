@@ -1,46 +1,93 @@
 <h1>Analytics</h1>
 
 <h3>Patients Registered Over Time</h3>
-<%= render "shared/chart",
-           id: "patientsChart",
-           type: "line",
-           labels: @registrations_by_date.keys,
-           datasets: [{
-             label: "Patients Registered",
-             data: @registrations_by_date.values,
-             backgroundColor: "rgba(75, 192, 192, 0.2)",
-             borderColor: "rgba(75, 192, 192, 1)",
-             borderWidth: 2,
-             pointRadius: 4,
-             pointHoverRadius: 6,
-             fill: true,
-             tension: 0.3
-           }],
-           options: {
-             responsive: true,
-             plugins: {
-               title: { display: true, text: "Daily Patient Registrations", font: { size: 16 } },
-               legend: { display: false },
-               tooltip: { mode: "index", intersect: false }
-             },
-             interaction: {
-               mode: "nearest",
-               axis: "x",
-               intersect: false
-             },
-             scales: {
-               x: {
-                 title: { display: true, text: "Date" },
-                 ticks: { autoSkip: true, maxTicksLimit: 10 }
+<div class="chart-container" style="width: 100%; margin: 0 auto;">
+  <%= render "shared/chart",
+             id: "patientsChart-#{SecureRandom.hex(4)}",
+             type: "line",
+             labels: @registrations_by_date.keys,
+             datasets: [{
+               label: "Patients Registered",
+               data: @registrations_by_date.values,
+               backgroundColor: "rgba(75, 192, 192, 0.2)",
+               borderColor: "rgba(75, 192, 192, 1)",
+               borderWidth: 2,
+               pointRadius: 4,
+               pointHoverRadius: 6,
+               fill: true,
+               tension: 0.3
+             }],
+             options: {
+               responsive: true,
+               maintainAspectRatio: false,
+               plugins: {
+                 title: { display: true, text: "Daily Patient Registrations", font: { size: 16 } },
+                 legend: { display: false },
+                 tooltip: { mode: "index", intersect: false }
                },
-               y: {
-                 beginAtZero: true,
-                 title: { display: true, text: "Number of Patients" },
-                 stepSize: 1
+               interaction: {
+                 mode: "nearest",
+                 axis: "x",
+                 intersect: false
+               },
+               scales: {
+                 x: {
+                   title: { display: true, text: "Date" },
+                   ticks: { autoSkip: true, maxTicksLimit: 10 }
+                 },
+                 y: {
+                   beginAtZero: true,
+                   title: { display: true, text: "Number of Patients" },
+                   stepSize: 1
+                 }
                }
-             }
-           } %>
+             } %>
+</div>
+
+<h3 class="mt-5">Patient Status Distribution</h3>
+<div class="chart-container pie-chart-container">
+  <%= render "shared/chart",
+             id: "statusPieChart-#{SecureRandom.hex(4)}",
+             type: "pie",
+             labels: @patients_by_status.keys.map(&:titleize),
+             datasets: [{
+               data: @patients_by_status.values,
+               backgroundColor: [
+                 "#4dc9f6",
+                 "#f67019",
+                 "#f53794",
+                 "#537bc4",
+                 "#acc236",
+                 "#166a8f",
+                 "#00a950",
+                 "#58595b",
+                 "#8549ba"
+               ],
+               borderWidth: 1
+             }],
+             options: {
+               responsive: true,
+               maintainAspectRatio: false,
+               plugins: {
+                 title: { 
+                   display: true, 
+                   text: "Patients by Status", 
+                   font: { size: 16 } 
+                 },
+                 legend: { 
+                   position: "right",
+                   labels: {
+                     boxWidth: 12,
+                     font: {
+                       size: 12
+                     }
+                   }
+                 },
+                 tooltip: { enabled: true }
+               }
+             } %>
+</div>
 
 <div class="d-flex justify-content-between mt-4">
-    <%= link_to "Back to dashboard", (current_user.receptionist? ? receptionist_dashboard_path : doctor_dashboard_path), class: "btn btn-outline-secondary" %>
+  <%= link_to "Back to dashboard", (current_user.receptionist? ? receptionist_dashboard_path : doctor_dashboard_path), class: "btn btn-outline-secondary" %>
 </div>

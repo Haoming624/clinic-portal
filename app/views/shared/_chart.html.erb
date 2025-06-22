@@ -1,18 +1,47 @@
-<div class="card shadow-sm mb-4 p-3">
-  <canvas id="<%= id %>" height="200"></canvas>
+<div class="chart-container">
+  <canvas id="<%= id %>"></canvas>
 </div>
 
 <script>
-  document.addEventListener("turbo:load", function () {
-    const ctx = document.getElementById("<%= id %>").getContext('2d');
-
-    new Chart(ctx, {
-      type: "<%= type || 'line' %>",
-      data: {
-        labels: <%= raw labels.to_json %>,
-        datasets: <%= raw datasets.to_json %>
-      },
-      options: <%= raw (options || {}).to_json %>
-    });
-  });
+(function() {
+  // Wait until DOM is fully loaded
+  document.addEventListener('DOMContentLoaded', initializeChart);
+  // Also listen for Turbo events
+  document.addEventListener('turbo:render', initializeChart);
+  
+  function initializeChart() {
+    const ctx = document.getElementById('<%= id %>');
+    if (!ctx) return; // Exit if canvas not found
+    
+    // Initialize chart registry if needed
+    window.chartRegistry = window.chartRegistry || {};
+    
+    // Destroy existing chart if it exists
+    if (window.chartRegistry['<%= id %>']) {
+      window.chartRegistry['<%= id %>'].destroy();
+      delete window.chartRegistry['<%= id %>'];
+    }
+    
+    // Only proceed if canvas exists in current DOM
+    if (document.body.contains(ctx)) {
+      try {
+        window.chartRegistry['<%= id %>'] = new Chart(ctx, {
+          type: '<%= type %>',
+          data: {
+            labels: <%= raw labels.to_json %>,
+            datasets: <%= raw datasets.to_json %>
+          },
+          options: <%= raw options.to_json %>
+        });
+      } catch (error) {
+        console.error('Chart initialization error:', error);
+      }
+    }
+  }
+  
+  // Initialize immediately if DOM already loaded
+  if (document.readyState === 'complete') {
+    initializeChart();
+  }
+})();
 </script>
