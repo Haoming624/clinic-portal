@@ -67,7 +67,7 @@
             <td><%= patient.name %></td>
             <td><%= patient.dob.strftime('%Y-%m-%d') if patient.dob %></td>
             <td><%= patient.status&.titleize %></td>
-            <td><%= patient.notes %></td>
+            <td><%= truncate(patient.notes, length: 100) %></td>
             <td>
               <%= link_to patient_path(patient), class: "btn btn-sm btn-info me-1", title: "View" do %>
                 <i class="bi bi-eye"></i>
