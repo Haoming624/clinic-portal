@@ -1,0 +1,12 @@
+<% unless current_page.last? %>
+  <li class="page-item">
+    <%= link_to raw('<i class="bi bi-chevron-right"></i>'), url, 
+        remote: remote, 
+        class: 'page-link',
+        'aria-label': 'Next page' %>
+  </li>
+<% else %>
+  <li class="page-item disabled">
+    <span class="page-link text-muted"><i class="bi bi-chevron-right"></i></span>
+  </li>
+<% end %>

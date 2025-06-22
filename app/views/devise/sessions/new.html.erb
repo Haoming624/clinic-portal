@@ -1,5 +1,7 @@
-<h2 class="text-center mb-4">Log in</h2>
+<h2 class="text-center mb-2">Welcome back!</h2>
+<p class="text-center text-muted mb-4">Please log in to access your dashboard.</p>
 
+<h2 class="text-center mb-4">Log in</h2>
 <div class="row justify-content-center">
   <div class="col-md-6 col-lg-4">
     <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "card p-4" }) do |f| %>
@@ -24,9 +26,5 @@
         <%= f.submit "Log in", class: "btn btn-primary" %>
       </div>
     <% end %>
-
-    <div class="mt-3 text-center">
-      <%= render "devise/shared/links" %>
-    </div>
   </div>
 </div>

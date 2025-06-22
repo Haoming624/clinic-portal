@@ -20,17 +20,21 @@
 </div>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("turbo:load", () => {
     const deleteModal = document.getElementById("confirmDeleteModal");
     const patientNameEl = document.getElementById("modalPatientName");
-    const deleteForm = document.getElementById("confirmDeleteButton").closest("form");
+    const deleteForm = document.getElementById("confirmDeleteButton")?.closest("form");
+
+    if (!deleteModal || !patientNameEl || !deleteForm) return;
 
     deleteModal.addEventListener("show.bs.modal", event => {
       const button = event.relatedTarget;
+      if (!button) return;
+
       const patientId = button.getAttribute("data-patient-id");
       const patientName = button.getAttribute("data-patient-name");
 
-      patientNameEl.textContent = patientName;
+      patientNameEl.textContent = patientName || "";
       deleteForm.action = `/patients/${patientId}`;
     });
   });

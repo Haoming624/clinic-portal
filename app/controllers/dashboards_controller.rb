@@ -43,6 +43,7 @@ class DashboardsController < ApplicationController
       patients = patients.where(status: params[:status])
     end
 
-    patients.order(:id)
+    # patients.order(:id)
+    patients.order(:id).page(params[:page]).per(10)
   end
 end

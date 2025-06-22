@@ -1,0 +1,45 @@
+<%= paginator.render do %>
+  <nav class="kaminari-pagination">
+    <ul class="pagination justify-content-center mb-0">
+      <%= first_page_tag do %>
+        <li class="page-item">
+          <%= link_to raw('&laquo; First'), url, class: 'page-link', aria: { label: 'First' } %>
+        </li>
+      <% end %>
+
+      <%= prev_page_tag do %>
+        <li class="page-item">
+          <%= link_to raw('&lsaquo; Prev'), url, class: 'page-link', aria: { label: 'Previous' } %>
+        </li>
+      <% end %>
+
+      <% each_page do |page| %>
+        <% if page.left_outer? || page.right_outer? || page.inside_window? %>
+          <%= page_tag page do %>
+            <li class="page-item <%= 'active' if page.current? %>">
+              <%= link_to page.number, url, class: 'page-link' %>
+            </li>
+          <% end %>
+        <% elsif !page.was_truncated? %>
+          <%= gap_tag do %>
+            <li class="page-item disabled">
+              <%= link_to raw('&hellip;'), '#', class: 'page-link' %>
+            </li>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <%= next_page_tag do %>
+        <li class="page-item">
+          <%= link_to raw('Next &rsaquo;'), url, class: 'page-link', aria: { label: 'Next' } %>
+        </li>
+      <% end %>
+
+      <%= last_page_tag do %>
+        <li class="page-item">
+          <%= link_to raw('Last &raquo;'), url, class: 'page-link', aria: { label: 'Last' } %>
+        </li>
+      <% end %>
+    </ul>
+  </nav>
+<% end %>
