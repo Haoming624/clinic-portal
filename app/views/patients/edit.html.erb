@@ -1,14 +1,14 @@
-<div class="container mt-4">
-  <div class="card shadow-sm border-0">
+<div class="container mt-4" style="max-width: 700px;">
+  <div class="card shadow-sm border-0 rounded">
     <div class="card-header bg-primary text-white">
       <h1 class="h4 mb-0">Edit Patient</h1>
     </div>
-    
+
     <div class="card-body">
       <%= form_with model: @patient, local: true do |f| %>
         <%= render 'form', f: f %>
-        
-        <div class="actions mt-4 d-flex justify-content-between">
+
+        <div class="d-flex justify-content-between mt-4">
           <%= link_to "Back to dashboard", (current_user.receptionist? ? receptionist_dashboard_path : doctor_dashboard_path), class: "btn btn-outline-secondary" %>
           <%= f.submit "Update Patient", class: "btn btn-primary" %>
         </div>

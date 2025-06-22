@@ -1,4 +1,4 @@
-<div class="container patient-view">
+<div class="container patient-view mx-auto" style="max-width: 800px;">
   <% if notice.present? %>
     <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
       <%= notice %>
@@ -6,13 +6,11 @@
     </div>
   <% end %>
 
-  <div class="card patient-card mt-4 shadow">
+  <div class="card patient-card mt-4 shadow-sm border-0 rounded">
     <div class="card-header bg-primary text-white">
-      <div class="d-flex justify-content-between align-items-center">
-        <h2 class="h5 mb-0">Patient Details</h2>
-      </div>
+      <h2 class="h5 mb-0">Patient Details</h2>
     </div>
-    
+
     <div class="card-body">
       <p><strong>Name:</strong> <%= @patient.name %></p>
       <p><strong>Date of Birth:</strong> <%= @patient.dob&.strftime('%Y-%m-%d') %></p>
@@ -20,58 +18,23 @@
       <p><strong>Status:</strong> <%= @patient.status&.titleize || 'N/A' %></p>
       <p><strong>Registered On:</strong> <%= @patient.created_at.strftime('%B %d, %Y') %></p>
 
-      <div class="patient-detail">
-        <span class="patient-detail-label">Last updated by:</span>
-        <%= @patient.updated_by_user ? @patient.updated_by_user.email : "N/A" %>
-      </div>
-
-      <div class="patient-detail">
-        <span class="patient-detail-label">Last updated on:</span>
-        <%= @patient.updated_at.strftime("%B %-d, %Y at %I:%M %p") %>
-      </div>
+      <p><strong>Last updated by:</strong> <%= @patient.updated_by_user ? @patient.updated_by_user.email : "N/A" %></p>
+      <p><strong>Last updated on:</strong> <%= @patient.updated_at.strftime("%B %-d, %Y at %I:%M %p") %></p>
     </div>
-    
-    <div class="card-footer bg-light">
-      <div class="d-flex justify-content-between flex-wrap gap-2">
-        <%= link_to "Edit this patient", edit_patient_path(@patient), class: "btn btn-warning" %>
-        
-        <%= link_to "Back to dashboard", (current_user.receptionist? ? receptionist_dashboard_path : doctor_dashboard_path), class: "btn btn-outline-secondary" %>
-        
-        <button type="button" 
-          class="btn btn-danger" 
-          data-bs-toggle="modal" 
-          data-bs-target="#confirmDeleteModal"
-          data-patient-id="<%= @patient.id %>"
-          data-patient-name="<%= @patient.name %>">
-          <i class="bi bi-trash-fill me-1"></i> Delete
-        </button>
-      </div>
+
+    <div class="card-footer bg-light d-flex justify-content-between flex-wrap gap-2">
+      <%= link_to "Edit this patient", edit_patient_path(@patient), class: "btn btn-warning" %>
+      <%= link_to "Back to dashboard", (current_user.receptionist? ? receptionist_dashboard_path : doctor_dashboard_path), class: "btn btn-outline-secondary" %>
+      <button type="button" 
+        class="btn btn-danger" 
+        data-bs-toggle="modal" 
+        data-bs-target="#confirmDeleteModal"
+        data-patient-id="<%= @patient.id %>"
+        data-patient-name="<%= @patient.name %>">
+        <i class="bi bi-trash-fill me-1"></i> Delete
+      </button>
     </div>
   </div>
 </div>
 
 <%= render 'shared/delete_patient_modal' %>
-
-<style>
-  .patient-view {
-    max-width: 800px;
-  }
-  
-  .patient-card {
-    border-radius: 10px;
-    overflow: hidden;
-    border: none;
-  }
-  
-  .card-header {
-    padding: 1rem 1.5rem;
-  }
-  
-  .card-body {
-    padding: 1.5rem;
-  }
-  
-  .patient-detail p {
-    margin-bottom: 0.75rem;
-  }
-</style>

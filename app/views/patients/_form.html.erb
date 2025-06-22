@@ -14,6 +14,6 @@
 </div>
 
 <div class="mb-3">
-  <%= f.label :status, class: "form-label" %>
+  <%= f.label :status, class: "form-label fw-semibold" %>
   <%= f.select :status, Patient.statuses.keys.map { |s| [s.titleize, s] }, {}, class: "form-select" %>
 </div>
