@@ -23,6 +23,5 @@ Rails.application.routes.draw do
 
   get "receptionist_dashboard", to: "dashboards#receptionist"
   get "doctor_dashboard", to: "dashboards#doctor"
-  get 'doctor/analytics', to: 'dashboards#analytics', as: 'doctor_analytics'
-
+  get "doctor/analytics", to: "dashboards#analytics", as: "doctor_analytics"
 end

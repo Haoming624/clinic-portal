@@ -17,12 +17,12 @@ gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
-gem "dotenv-rails", groups: [:development, :test]
+gem "dotenv-rails", groups: [ :development, :test ]
 
-gem 'devise'
+gem "devise"
 # gem 'chartkick'
 # gem 'groupdate'
-gem 'kaminari'
+gem "kaminari"
 # gem 'kaminari-bootstrap'
 
 

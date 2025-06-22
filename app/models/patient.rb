@@ -6,6 +6,6 @@ class Patient < ApplicationRecord
     discharged: "discharged",
     deceased: "deceased"
   }
-  
+
   validates :status, inclusion: { in: statuses.keys }
 end

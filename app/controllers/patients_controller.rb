@@ -1,7 +1,7 @@
 class PatientsController < ApplicationController
   before_action :authenticate_user!
-  before_action :check_receptionist, only: [:new, :create, :edit, :update, :destroy]
-  before_action :set_patient, only: [:show, :edit, :update, :destroy]
+  before_action :check_receptionist, only: [ :new, :create, :edit, :update, :destroy ]
+  before_action :set_patient, only: [ :show, :edit, :update, :destroy ]
 
   # Only receptionists allowed for modifying actions
   def check_receptionist
@@ -60,7 +60,7 @@ class PatientsController < ApplicationController
     # end
     @patient = Patient.find(params[:id])
     @patient.destroy
-    redirect_to receptionist_dashboard_path, notice: 'Patient was successfully deleted.'
+    redirect_to receptionist_dashboard_path, notice: "Patient was successfully deleted."
   end
 
   private

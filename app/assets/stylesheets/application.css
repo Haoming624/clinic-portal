@@ -3,6 +3,10 @@
   margin-bottom: 1.5rem;
 }
 
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
 /* Responsive chart container */
 .chart-container {
   position: relative;
