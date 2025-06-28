@@ -1,8 +1,53 @@
+/* CSS Variables */
+:root {
+  --clinic-primary: #3498db;
+  --clinic-secondary: #6c757d;
+  --clinic-light: #f8f9fa;
+  --clinic-dark: #2c3e50;
+  --clinic-border: #dee2e6;
+}
+
+/* Base body styles */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  scroll-behavior: smooth;
+}
+
+/* Navigation styles */
+.navbar-custom {
+  background-color: var(--clinic-light);
+  border-bottom: 1px solid var(--clinic-border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 0.75rem 1.5rem;
+}
+
+.navbar-brand-custom {
+  font-weight: 600;
+  color: var(--clinic-dark);
+  font-size: 1.1rem;
+}
+
+.user-email {
+  color: var(--clinic-secondary);
+  font-size: 0.9rem;
+}
+
+/* Main container styles */
 .main-container {
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
+  flex-grow: 1;
 }
 
+/* Footer styles */
+footer {
+  background-color: var(--clinic-light);
+  border-top: 1px solid var(--clinic-border);
+}
+
+/* Modal styles */
 .modal-backdrop {
   background-color: rgba(0, 0, 0, 0.5) !important;
 }
