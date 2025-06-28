@@ -6,7 +6,7 @@
         Filters
       </div>
       <div class="card-body">
-        <%= form_with url: dashboard_path, method: :get, local: true do %>
+        <%= form_with url: (current_user.receptionist? ? receptionist_dashboard_path : doctor_dashboard_path), method: :get, local: true do %>
           <div class="mb-3">
             <%= label_tag :query, "Search by Name", class: "form-label fw-semibold" %>
             <%= text_field_tag :query, params[:query], class: "form-control", placeholder: "Enter patient name" %>
@@ -33,7 +33,7 @@
 
           <div class="d-grid gap-2">
             <%= submit_tag "Apply Filters", class: "btn btn-primary" %>
-            <%= link_to "Clear Filters", dashboard_path, class: "btn btn-outline-secondary" %>
+            <%= link_to "Clear Filters", (current_user.receptionist? ? receptionist_dashboard_path : doctor_dashboard_path), class: "btn btn-outline-secondary" %>
           </div>
         <% end %>
       </div>
@@ -44,7 +44,7 @@
   <div class="col-md-9">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h3 class="mb-0">Patient List</h3>
-      <% if receptionist? %>
+      <% if current_user.receptionist? %>
         <%= link_to "Add New Patient", new_patient_path, class: "btn btn-success" %>
       <% end %>
     </div>
@@ -73,7 +73,7 @@
                 <i class="bi bi-eye"></i>
               <% end %>
 
-              <% if receptionist? %>
+              <% if current_user.receptionist? %>
                 <%= link_to edit_patient_path(patient), class: "btn btn-sm btn-warning me-1", title: "Edit" do %>
                   <i class="bi bi-pencil"></i>
                 <% end %>

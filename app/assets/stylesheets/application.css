@@ -66,9 +66,58 @@ footer {
   margin: 0 auto;
 }
 
+/* Undo delete toast styles */
+.toast {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.toast.fade-out {
+  animation: slideOutRight 0.3s ease-in;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Alert link styles for undo functionality */
+.alert-link {
+  color: inherit;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.alert-link:hover {
+  color: inherit;
+  text-decoration: none;
+}
+
 @media (max-width: 768px) {
   .chart-container {
     width: 100% !important;
     height: 250px;
+  }
+  
+  .toast {
+    min-width: 280px !important;
+    right: 10px !important;
+    left: 10px !important;
   }
 }

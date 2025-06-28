@@ -11,31 +11,96 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <%= button_to "#", method: :delete, class: "btn btn-danger", id: "confirmDeleteButton" do %>
-          Yes
-        <% end %>
+        <button type="button" class="btn btn-danger" id="confirmDeleteButton">
+          Yes, Delete
+        </button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  document.addEventListener("turbo:load", () => {
+  console.log("Delete modal script loaded");
+  
+  function initializeDeleteModal() {
+    console.log("Initializing delete modal");
+    
     const deleteModal = document.getElementById("confirmDeleteModal");
     const patientNameEl = document.getElementById("modalPatientName");
-    const deleteForm = document.getElementById("confirmDeleteButton")?.closest("form");
+    const confirmDeleteButton = document.getElementById("confirmDeleteButton");
 
-    if (!deleteModal || !patientNameEl || !deleteForm) return;
+    if (!deleteModal) {
+      console.error("Delete modal not found");
+      return;
+    }
+    
+    if (!patientNameEl) {
+      console.error("Patient name element not found");
+      return;
+    }
+    
+    if (!confirmDeleteButton) {
+      console.error("Confirm delete button not found");
+      return;
+    }
+
+    console.log("All modal elements found");
 
     deleteModal.addEventListener("show.bs.modal", event => {
+      console.log("Modal show event triggered");
+      
       const button = event.relatedTarget;
-      if (!button) return;
+      if (!button) {
+        console.error("No related target found");
+        return;
+      }
 
       const patientId = button.getAttribute("data-patient-id");
       const patientName = button.getAttribute("data-patient-name");
 
+      console.log("Modal opened for patient:", patientId, patientName);
+
       patientNameEl.textContent = patientName || "";
-      deleteForm.action = `/patients/${patientId}`;
+      
+      // Add click handler to the delete button
+      confirmDeleteButton.onclick = function() {
+        console.log("Delete button clicked for patient:", patientId);
+        
+        // Create and submit the form
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/patients/${patientId}`;
+        
+        const methodInput = document.createElement('input');
+        methodInput.type = 'hidden';
+        methodInput.name = '_method';
+        methodInput.value = 'DELETE';
+        
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'authenticity_token';
+        csrfInput.value = document.querySelector('meta[name="csrf-token"]').content;
+        
+        form.appendChild(methodInput);
+        form.appendChild(csrfInput);
+        document.body.appendChild(form);
+        
+        console.log("Submitting delete form for patient:", patientId);
+        form.submit();
+      };
     });
-  });
+  }
+
+  // Initialize on turbo:load
+  document.addEventListener("turbo:load", initializeDeleteModal);
+  
+  // Also initialize on DOMContentLoaded as fallback
+  document.addEventListener("DOMContentLoaded", initializeDeleteModal);
+  
+  // Initialize immediately if DOM is already loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeDeleteModal);
+  } else {
+    initializeDeleteModal();
+  }
 </script>

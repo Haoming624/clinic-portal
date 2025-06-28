@@ -1,7 +1,8 @@
 class PatientsController < ApplicationController
   before_action :authenticate_user!
-  before_action :check_receptionist, only: [ :new, :create, :edit, :update, :destroy ]
+  before_action :check_receptionist, only: [ :new, :create, :edit, :update, :destroy, :restore ]
   before_action :set_patient, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_deleted_patient, only: [ :restore ]
 
   rescue_from ActiveRecord::RecordNotFound, with: :handle_record_not_found
   rescue_from ActionController::ParameterMissing, with: :handle_parameter_missing
@@ -67,14 +68,37 @@ class PatientsController < ApplicationController
     render :edit, status: :unprocessable_entity
   end
 
-  # DELETE /patients/1
+  # DELETE /patients/1 (soft delete)
   def destroy
     patient_id = @patient.id
     patient_name = @patient.name
     
-    if @patient.destroy
-      Rails.logger.info "Patient deleted successfully: #{patient_id} by user: #{current_user.id}"
-      redirect_to receptionist_dashboard_path, notice: "Patient '#{patient_name}' was successfully deleted."
+    if @patient.soft_delete
+      Rails.logger.info "Patient soft deleted successfully: #{patient_id} by user: #{current_user.id}"
+      
+      # Store patient info in session for undo functionality
+      session[:last_deleted_patient] = {
+        id: patient_id,
+        name: patient_name,
+        deleted_at: Time.current.iso8601
+      }
+      
+      Rails.logger.info "Session after storing deleted patient: #{session[:last_deleted_patient]}"
+      
+      respond_to do |format|
+        format.html { 
+          redirect_to receptionist_dashboard_path, 
+          notice: "Patient '#{patient_name}' was successfully deleted."
+        }
+        format.json { 
+          render json: { 
+            success: true, 
+            message: "Patient deleted successfully",
+            undo_url: restore_patient_path(patient_id),
+            patient_name: patient_name
+          } 
+        }
+      end
     else
       Rails.logger.error "Patient deletion failed: #{@patient.errors.full_messages.join(', ')}"
       redirect_to receptionist_dashboard_path, alert: "Failed to delete patient. Please try again."
@@ -82,6 +106,68 @@ class PatientsController < ApplicationController
   rescue => e
     Rails.logger.error "Unexpected error deleting patient: #{e.message}"
     redirect_to receptionist_dashboard_path, alert: "An unexpected error occurred while deleting the patient."
+  end
+
+  # PATCH /patients/1/restore (undo delete)
+  def restore
+    if @patient.restore
+      Rails.logger.info "Patient restored successfully: #{@patient.id} by user: #{current_user.id}"
+      redirect_to receptionist_dashboard_path, notice: "Patient '#{@patient.name}' was successfully restored."
+    else
+      Rails.logger.error "Patient restoration failed: #{@patient.errors.full_messages.join(', ')}"
+      redirect_to receptionist_dashboard_path, alert: "Failed to restore patient. Please try again."
+    end
+  rescue => e
+    Rails.logger.error "Unexpected error restoring patient: #{e.message}"
+    redirect_to receptionist_dashboard_path, alert: "An unexpected error occurred while restoring the patient."
+  end
+
+  # PATCH /patients/restore_last (restore last deleted patient)
+  def restore_last
+    Rails.logger.info "Session contents: #{session.to_h}"
+    Rails.logger.info "Last deleted patient from session: #{session[:last_deleted_patient]}"
+    
+    last_deleted = session[:last_deleted_patient]
+    
+    if last_deleted && last_deleted[:id]
+      Rails.logger.info "Attempting to restore patient ID: #{last_deleted[:id]}"
+      @patient = Patient.unscoped.find(last_deleted[:id])
+      
+      if @patient.restore
+        Rails.logger.info "Last deleted patient restored successfully: #{@patient.id} by user: #{current_user.id}"
+        session.delete(:last_deleted_patient)
+        redirect_to receptionist_dashboard_path, notice: "Patient '#{@patient.name}' was successfully restored."
+      else
+        Rails.logger.error "Last deleted patient restoration failed: #{@patient.errors.full_messages.join(', ')}"
+        redirect_to receptionist_dashboard_path, alert: "Failed to restore patient. Please try again."
+      end
+    else
+      Rails.logger.warn "No last deleted patient found in session, trying fallback"
+      
+      # Fallback: look for recently deleted patients (within last 5 minutes)
+      recent_deleted = Patient.unscoped.where('deleted_at > ?', 5.minutes.ago).order(deleted_at: :desc).first
+      
+      if recent_deleted
+        Rails.logger.info "Found recently deleted patient: #{recent_deleted.id}"
+        if recent_deleted.restore
+          Rails.logger.info "Recently deleted patient restored successfully: #{recent_deleted.id} by user: #{current_user.id}"
+          redirect_to receptionist_dashboard_path, notice: "Patient '#{recent_deleted.name}' was successfully restored."
+        else
+          Rails.logger.error "Recently deleted patient restoration failed: #{recent_deleted.errors.full_messages.join(', ')}"
+          redirect_to receptionist_dashboard_path, alert: "Failed to restore patient. Please try again."
+        end
+      else
+        Rails.logger.warn "No recently deleted patients found"
+        redirect_to receptionist_dashboard_path, alert: "No patient to restore."
+      end
+    end
+  rescue ActiveRecord::RecordNotFound
+    Rails.logger.warn "Last deleted patient not found in database"
+    session.delete(:last_deleted_patient)
+    redirect_to receptionist_dashboard_path, alert: "Patient not found or already restored."
+  rescue => e
+    Rails.logger.error "Unexpected error restoring last deleted patient: #{e.message}"
+    redirect_to receptionist_dashboard_path, alert: "An unexpected error occurred while restoring the patient."
   end
 
   private
@@ -92,6 +178,13 @@ class PatientsController < ApplicationController
     rescue ActiveRecord::RecordNotFound
       # This will be handled by rescue_from
       raise
+    end
+
+    # Set deleted patient for restore action
+    def set_deleted_patient
+      @patient = Patient.unscoped.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      redirect_to receptionist_dashboard_path, alert: "Patient not found or already restored."
     end
 
     # Whitelist parameters

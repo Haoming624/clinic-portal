@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_22_145922) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_22_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,6 +22,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_22_145922) do
     t.datetime "updated_at", null: false
     t.string "status", default: "active", null: false
     t.integer "updated_by_user_id"
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_patients_on_deleted_at"
   end
 
   create_table "users", force: :cascade do |t|

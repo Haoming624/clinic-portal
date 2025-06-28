@@ -2,7 +2,14 @@ Rails.application.routes.draw do
   get "dashboards/receptionist"
   get "dashboards/doctor"
   get "home/index"
-  resources :patients
+  resources :patients do
+    member do
+      patch :restore
+    end
+    collection do
+      patch :restore_last
+    end
+  end
   devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
