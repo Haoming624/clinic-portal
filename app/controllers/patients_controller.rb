@@ -72,31 +72,31 @@ class PatientsController < ApplicationController
   def destroy
     patient_id = @patient.id
     patient_name = @patient.name
-    
+
     if @patient.soft_delete
       Rails.logger.info "Patient soft deleted successfully: #{patient_id} by user: #{current_user.id}"
-      
+
       # Store patient info in session for undo functionality
       session[:last_deleted_patient] = {
         id: patient_id,
         name: patient_name,
         deleted_at: Time.current.iso8601
       }
-      
+
       Rails.logger.info "Session after storing deleted patient: #{session[:last_deleted_patient]}"
-      
+
       respond_to do |format|
-        format.html { 
-          redirect_to receptionist_dashboard_path, 
+        format.html {
+          redirect_to receptionist_dashboard_path,
           notice: "Patient '#{patient_name}' was successfully deleted."
         }
-        format.json { 
-          render json: { 
-            success: true, 
+        format.json {
+          render json: {
+            success: true,
             message: "Patient deleted successfully",
             undo_url: restore_patient_path(patient_id),
             patient_name: patient_name
-          } 
+          }
         }
       end
     else
@@ -126,13 +126,13 @@ class PatientsController < ApplicationController
   def restore_last
     Rails.logger.info "Session contents: #{session.to_h}"
     Rails.logger.info "Last deleted patient from session: #{session[:last_deleted_patient]}"
-    
+
     last_deleted = session[:last_deleted_patient]
-    
+
     if last_deleted && last_deleted[:id]
       Rails.logger.info "Attempting to restore patient ID: #{last_deleted[:id]}"
       @patient = Patient.unscoped.find(last_deleted[:id])
-      
+
       if @patient.restore
         Rails.logger.info "Last deleted patient restored successfully: #{@patient.id} by user: #{current_user.id}"
         session.delete(:last_deleted_patient)
@@ -143,10 +143,10 @@ class PatientsController < ApplicationController
       end
     else
       Rails.logger.warn "No last deleted patient found in session, trying fallback"
-      
+
       # Fallback: look for recently deleted patients (within last 5 minutes)
-      recent_deleted = Patient.unscoped.where('deleted_at > ?', 5.minutes.ago).order(deleted_at: :desc).first
-      
+      recent_deleted = Patient.unscoped.where("deleted_at > ?", 5.minutes.ago).order(deleted_at: :desc).first
+
       if recent_deleted
         Rails.logger.info "Found recently deleted patient: #{recent_deleted.id}"
         if recent_deleted.restore
